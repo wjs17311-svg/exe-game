@@ -19,96 +19,87 @@
             image-rendering: crisp-edges;
         }
         
-        .canvas-container {
-            filter: url(#pixel-filter);
-        }
+        .canvas-container { filter: url(#pixel-filter); }
 
         .game-container { 
             width: 100vw; height: 100vh; position: relative; touch-action: none; 
         }
 
-        #ui-layer {
-            position: absolute; z-index: 10; pointer-events: none; 
+        /* 📱 가로 회전 안내판 */
+        #rotate-msg {
+            display: none; position: fixed; top: 0; left: 0; 
+            width: 100vw; height: 100vh; background: #333; 
+            color: white; z-index: 9999; justify-content: center; 
+            align-items: center; text-align: center; font-family: sans-serif;
+        }
+        @media screen and (orientation: portrait) {
+            #rotate-msg { display: flex; }
+            .game-container { display: none; }
         }
 
-        /* 🔥 버튼 보이기 복구 완료! */
+        #ui-layer { position: absolute; z-index: 10; pointer-events: none; }
+
         .hidden-btn {
-            position: absolute; 
-            pointer-events: auto; 
-            cursor: pointer;
-            
-            /* 어떤 색이나 테두리가 있어도 무조건 투명하게 덮어버립니다! */
+            position: absolute; pointer-events: auto; cursor: pointer;
             background-color: transparent !important;
-            border: none !important;
-            color: transparent !important;
+            border: none !important; color: transparent !important;
             opacity: 0 !important; 
-            
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        /* ==============================================================
-           🛠️ 여기서부터 각 버튼의 위치와 크기를 다시 조절하세요!
-           ============================================================== */
-        /* 도구들 */
+        /* 버튼 배치 */
         #mode-draw { top: 25%; left: 9.7%; width: 60px; height: 50px; }
         #mode-spray { top: 32%; left: 9.7%; width: 60px; height: 50px; }
         #add-triangle { top: 38.8%; left: 9.7%; width: 60px; height: 50px; }
-        #clear-btn { top: 45%; left: 9.7%; width: 60px; height: 55px; background-color: rgba(255,59,48,0.5); }
-        #submit-btn { top: 8%; left: 15.5%; width: 230px; height: 40px; background-color: rgba(52, 199, 89, 0.5); }
+        #clear-btn { top: 45%; left: 9.7%; width: 60px; height: 55px; }
+        #submit-btn { top: 8%; left: 15.5%; width: 230px; height: 40px; }
 
         /* 색상 버튼들 */
-        #c-white { top: 31%; left: 85%; width: 30px; height: 30px; background-color: rgba(255,255,255,0.7); color: black;}
-        #c-black { top: 31%; left: 87.3%; width: 30px; height: 30px; background-color: rgba(0,0,0,0.7);}
+        #c-white { top: 31%; left: 85%; width: 30px; height: 30px; }
+        #c-black { top: 31%; left: 87.3%; width: 30px; height: 30px; }
         #c-gray { top: 36%; left: 85%; width: 30px; height: 30px; }
         #c-darkgray { top: 36%; left: 87.3%; width: 30px; height: 30px; }
         #c-red { top: 41%; left: 85%; width: 30px; height: 30px; }
         #c-darkred { top: 41%; left: 87.3%; width: 30px; height: 30px; }
-        #c-yellow { top: 46%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-yellow { top: 46%; left: 85%; width: 30px; height: 30px; }
         #c-darkyellow { top: 46%; left: 87.3%; width: 30px; height: 30px; }
         #c-green { top: 51%; left: 85%; width: 30px; height: 30px; }
         #c-darkgreen { top: 51%; left: 87.3%; width: 30px; height: 30px; }
-        #c-mint { top: 56%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-mint { top: 56%; left: 85%; width: 30px; height: 30px; }
         #c-darkmint { top: 56%; left: 87.3%; width: 30px; height: 30px; }
         #c-blue { top: 60.8%; left: 85%; width: 30px; height: 30px; }
         #c-darkblue { top: 60.8%; left: 87.3%; width: 30px; height: 30px; }
         #c-purple { top: 65.7%; left: 85%; width: 30px; height: 30px; }
         #c-darkpurple { top: 65.7%; left: 87.3%; width: 30px; height: 30px; }
-        #c-skin { top: 70.6%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-skin { top: 70.6%; left: 85%; width: 30px; height: 30px; }
         #c-darkskin { top: 70.6%; left: 87.3%; width: 30px; height: 30px; }
-        #c-greenmint { top: 75.4%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-greenmint { top: 75.4%; left: 85%; width: 30px; height: 30px; }
         #c-darkgreenmint { top: 75.4%; left: 87.3%; width: 30px; height: 30px; }
-        #c-skyblue { top: 80.1%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-skyblue { top: 80.1%; left: 85%; width: 30px; height: 30px; }
         #c-darkskyblue { top: 80.1%; left: 87.3%; width: 30px; height: 30px; }
-        #c-lightpurple { top: 85%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-lightpurple { top: 85%; left: 85%; width: 30px; height: 30px; }
         #c-darklightpurple { top: 85%; left: 87.3%; width: 30px; height: 30px; }
-        #c-pink { top: 89.7%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-pink { top: 89.7%; left: 85%; width: 30px; height: 30px; }
         #c-magenta { top: 89.7%; left: 87.3%; width: 30px; height: 30px; }
-        #c-orange { top: 94.4%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-orange { top: 94.4%; left: 85%; width: 30px; height: 30px; }
         #c-brown { top: 94.4%; left: 87.3%; width: 30px; height: 30px; }
     </style>
 </head>
 <body>
+    <div id="rotate-msg"><div><span style="font-size: 50px;">📱</span><p>기기를 가로로 돌려주세요!</p></div></div>
 
     <svg width="0" height="0" style="position: absolute; pointer-events: none; z-index: -1;">
-        <filter id="pixel-filter">
-            <feComponentTransfer>
-                <feFuncA type="discrete" tableValues="0 1"/>
-            </feComponentTransfer>
-        </filter>
+        <filter id="pixel-filter"><feComponentTransfer><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer></filter>
     </svg>
 
     <div class="game-container">
         <canvas id="gameCanvas"></canvas>
-
         <div id="ui-layer">
             <div id="mode-draw" class="hidden-btn">선그리기</div>
             <div id="mode-spray" class="hidden-btn">스프레이</div>
             <div id="add-triangle" class="hidden-btn">삼각형</div>
             <div id="clear-btn" class="hidden-btn">지우기</div>
             <div id="submit-btn" class="hidden-btn">제출</div>
-
             <div id="c-white" class="hidden-btn color-btn" data-color="#ffffff">흰색</div>
             <div id="c-black" class="hidden-btn color-btn" data-color="#353130">검은색</div>
             <div id="c-gray" class="hidden-btn color-btn" data-color="#cac9bf">회색</div>
@@ -139,26 +130,15 @@
             <div id="c-brown" class="hidden-btn color-btn" data-color="#803c21">갈색</div>
         </div>
     </div>
-
     <script>
-        // =========================================================================
-        // 🎯 랜덤 이미지(도화지) 정밀 조정 세팅
-        // =========================================================================
         const targetScaleOffset = 2.05; 
         const targetOffsetX = -90; 
         const targetOffsetY = 240; 
-        // =========================================================================
-
         const bgImageUrl = 'image_0.png'; 
-        
         const randomNum = Math.floor(Math.random() * 527); 
-        const paddedNum = String(randomNum).padStart(3, '0');
-        const randomTargetUrl = `forexe${paddedNum}.jpg`; 
-
+        const randomTargetUrl = `forexe${String(randomNum).padStart(3, '0')}.jpg`; 
         const canvas = new fabric.Canvas('gameCanvas', { isDrawingMode: true });
-        
-        let randomTargetObj = null; 
-        let activeColor = '#ffffff'; 
+        let randomTargetObj = null, activeColor = '#ffffff'; 
 
         canvas.freeDrawingBrush.color = activeColor;
         canvas.freeDrawingBrush.width = 5;
@@ -166,157 +146,41 @@
         canvas.freeDrawingBrush.strokeLineJoin = 'miter'; 
 
         function resizeCanvasToWindow() {
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-
-            canvas.setWidth(windowWidth);
-            canvas.setHeight(windowHeight);
-
+            const windowWidth = window.innerWidth, windowHeight = window.innerHeight;
+            canvas.setWidth(windowWidth); canvas.setHeight(windowHeight);
             if (canvas.backgroundImage) {
                 const bgImg = canvas.backgroundImage;
-                const scaleX = windowWidth / bgImg.width;
-                const scaleY = windowHeight / bgImg.height;
-                const mainScale = Math.max(scaleX, scaleY); 
-
-                bgImg.set({
-                    scaleX: mainScale,
-                    scaleY: mainScale,
-                    left: windowWidth / 2,
-                    top: windowHeight / 2,
-                    originX: 'center',
-                    originY: 'center'
-                });
-
+                const mainScale = Math.max(windowWidth / bgImg.width, windowHeight / bgImg.height); 
+                bgImg.set({ scaleX: mainScale, scaleY: mainScale, left: windowWidth/2, top: windowHeight/2, originX: 'center', originY: 'center' });
                 if (randomTargetObj) {
-                    const finalScale = mainScale * targetScaleOffset;
-                    const finalLeft = (windowWidth / 2) + (targetOffsetX * mainScale);
-                    const finalTop = (windowHeight / 2) + (targetOffsetY * mainScale);
-
-                    randomTargetObj.set({
-                        scaleX: finalScale,
-                        scaleY: finalScale,
-                        left: finalLeft,
-                        top: finalTop,
-                    });
+                    randomTargetObj.set({ scaleX: mainScale * targetScaleOffset, scaleY: mainScale * targetScaleOffset, left: (windowWidth/2) + (targetOffsetX * mainScale), top: (windowHeight/2) + (targetOffsetY * mainScale) });
                 }
-                
                 canvas.renderAll();
-
-                const uiLayer = document.getElementById('ui-layer');
-                const imgRenderWidth = bgImg.width * mainScale;
-                const imgRenderHeight = bgImg.height * mainScale;
-                const imgLeft = (windowWidth - imgRenderWidth) / 2;
-                const imgTop = (windowHeight - imgRenderHeight) / 2;
-
-                uiLayer.style.width = imgRenderWidth + 'px';
-                uiLayer.style.height = imgRenderHeight + 'px';
-                uiLayer.style.left = imgLeft + 'px';
-                uiLayer.style.top = imgTop + 'px';
+                document.getElementById('ui-layer').style.cssText = `width:${bgImg.width*mainScale}px; height:${bgImg.height*mainScale}px; left:${(windowWidth - bgImg.width*mainScale)/2}px; top:${(windowHeight - bgImg.height*mainScale)/2}px;`;
             }
         }
-
         fabric.Image.fromURL(bgImageUrl, function(bgImg) {
-            if (!bgImg) {
-                alert("배경 이미지(image_0.png)를 찾을 수 없습니다!");
-                return;
-            }
             bgImg.set({ selectable: false, evented: false });
-            
             canvas.setBackgroundImage(bgImg, function() {
                 fabric.Image.fromURL(randomTargetUrl, function(rndImg) {
-                    if (rndImg) {
-                        randomTargetObj = rndImg;
-                        randomTargetObj.set({
-                            selectable: false, 
-                            evented: false,    
-                            originX: 'center',
-                            originY: 'center'
-                        });
-                        canvas.add(randomTargetObj);
-                        console.log("오늘의 랜덤 이미지:", randomTargetUrl);
-                    } else {
-                        console.warn("랜덤 이미지를 불러올 수 없습니다:", randomTargetUrl);
-                    }
-                    resizeCanvasToWindow();
+                    randomTargetObj = rndImg.set({ selectable: false, evented: false, originX: 'center', originY: 'center' });
+                    canvas.add(randomTargetObj); resizeCanvasToWindow();
                 }, { crossOrigin: 'anonymous' });
             });
-            canvas.freeDrawingBrush.clipPath = null;
         }, { crossOrigin: 'anonymous' });
-
         window.addEventListener('resize', resizeCanvasToWindow);
-
-        const changeMode = (draw) => {
-            canvas.isDrawingMode = draw;
-        };
-
-        document.getElementById('mode-draw').addEventListener('click', () => {
-            canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-            canvas.freeDrawingBrush.color = activeColor;
-            canvas.freeDrawingBrush.width = 5;
-            canvas.freeDrawingBrush.strokeLineCap = 'square'; 
-            canvas.freeDrawingBrush.strokeLineJoin = 'miter'; 
-            changeMode(true);
-        });
-
-        document.getElementById('mode-spray').addEventListener('click', () => {
-            canvas.freeDrawingBrush = new fabric.SprayBrush(canvas);
-            canvas.freeDrawingBrush.color = activeColor;
-            canvas.freeDrawingBrush.width = 15;
-            changeMode(true);
-        });
-
-        document.querySelectorAll('.color-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                activeColor = e.target.getAttribute('data-color');
-                if(canvas.freeDrawingBrush) {
-                    canvas.freeDrawingBrush.color = activeColor;
-                }
-            });
-        });
-
-        document.getElementById('add-triangle').addEventListener('click', () => {
-            changeMode(false);
-            const triangle = new fabric.Triangle({
-                top: canvas.height / 2 - 40, left: canvas.width / 2 - 40, 
-                width: 80, height: 80, fill: activeColor 
-            });
-            canvas.add(triangle);
-        });
-
-        document.getElementById('clear-btn').addEventListener('click', () => {
-            const allObjects = canvas.getObjects();
-            allObjects.forEach((obj) => {
-                if (obj !== randomTargetObj) {
-                    canvas.remove(obj);
-                }
-            });
-            canvas.renderAll();
-        });
-
+        window.addEventListener("orientationchange", () => setTimeout(resizeCanvasToWindow, 300));
+        
+        // 버튼 로직 생략 (기존과 동일)
+        document.getElementById('mode-draw').addEventListener('click', () => { canvas.freeDrawingBrush = new fabric.PencilBrush(canvas); canvas.freeDrawingBrush.color = activeColor; canvas.freeDrawingBrush.width = 5; canvas.freeDrawingBrush.strokeLineCap = 'square'; canvas.freeDrawingBrush.strokeLineJoin = 'miter'; canvas.isDrawingMode = true; });
+        document.getElementById('mode-spray').addEventListener('click', () => { canvas.freeDrawingBrush = new fabric.SprayBrush(canvas); canvas.freeDrawingBrush.color = activeColor; canvas.freeDrawingBrush.width = 15; canvas.isDrawingMode = true; });
+        document.querySelectorAll('.color-btn').forEach(btn => btn.addEventListener('click', (e) => { activeColor = e.target.getAttribute('data-color'); if(canvas.freeDrawingBrush) canvas.freeDrawingBrush.color = activeColor; }));
+        document.getElementById('add-triangle').addEventListener('click', () => { canvas.isDrawingMode = false; canvas.add(new fabric.Triangle({ top: canvas.height/2-40, left: canvas.width/2-40, width: 80, height: 80, fill: activeColor })); });
+        document.getElementById('clear-btn').addEventListener('click', () => { canvas.getObjects().forEach(obj => { if (obj !== randomTargetObj) canvas.remove(obj); }); canvas.renderAll(); });
         document.getElementById('submit-btn').addEventListener('click', () => {
-            const tempBg = canvas.backgroundImage;
-            canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
-
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
-            const tempCtx = tempCanvas.getContext('2d');
-            
-            tempCtx.drawImage(canvas.getElement(), 0, 0);
-            
-            const imgData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-            const data = imgData.data;
-            for (let i = 3; i < data.length; i += 4) {
-                data[i] = data[i] > 127 ? 255 : 0; 
-            }
-            tempCtx.putImageData(imgData, 0, 0);
-
-            const alphaDataUrl = tempCanvas.toDataURL({ format: 'png', quality: 1.0 });
-
+            const tempBg = canvas.backgroundImage; canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+            const link = document.createElement('a'); link.download = `artwork_${Date.now()}.png`; link.href = canvas.toDataURL({ format: 'png', quality: 1.0 }); link.click();
             canvas.setBackgroundImage(tempBg, canvas.renderAll.bind(canvas));
-            
-            console.log("결과물 추출 완료:", alphaDataUrl);
-            alert("UI를 제외한 도화지와 그림만 픽셀 느낌으로 성공적으로 추출되었습니다!");
         });
     </script>
 </body>
