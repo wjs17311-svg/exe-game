@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NovaA 페인터 꾸미기</title>
+    <title>NouerA 페인터 꾸미기</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <style>
         html, body { 
@@ -30,11 +30,22 @@
             width: 100vw; height: 100vh; position: relative; touch-action: none; 
         }
 
-        /* 📱 가로 회전 안내판 */
-        #rotate-msg { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #333; color: white; z-index: 9999; justify-content: center; align-items: center; text-align: center; }
+        /* =========================================
+           🌟 6. 가로 회전 안내 팝업 (rotate.png)
+           👉 세로 모드일 때 전체 화면에 표시됩니다. 가로로 돌리면 자동으로 사라짐.
+              이미지 크기/위치를 조절하려면 아래 background-size / background-position을 수정하세요.
+              (cover: 화면 꽉 채움 / contain: 이미지 비율 유지하며 안에 맞춤)
+           ========================================= */
+        #rotate-msg { 
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background-image: url('rotate.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 9999; justify-content: center; align-items: center; text-align: center; 
+        }
         @media screen and (orientation: portrait) { #rotate-msg { display: flex; } .game-container { display: none; } }
 
-        /* 배경 이미지 */
         #bg-img {
             position: absolute;
             z-index: 1; 
@@ -45,71 +56,160 @@
             position: absolute; z-index: 10; pointer-events: none; 
         }
 
-        /* 그리기 제한 박스 */
         #draw-area { 
             position: absolute; 
-            top: 17.5%;      
-            left: 13.5%;     
-            width: 69.5%;    
-            height: 100%;   
+            top: 17.5%; left: 13.5%; width: 69.5%; height: 100%;   
             background-color: transparent !important; 
             border: none !important; 
             pointer-events: none; 
             z-index: 1; 
         }
 
-        .hidden-btn {
-            position: absolute; 
-            pointer-events: auto; 
-            cursor: pointer;
-            background-color: transparent !important;
-            border: none !important;
-            color: transparent !important;
-            opacity: 0 !important; 
+        /* 🌟 모든 클릭 영역 투명화 처리 */
+        .hidden-btn, .thickness-option, .shape-option, #credits-close-btn {
+            position: absolute; pointer-events: auto; cursor: pointer;
+            background-color: transparent !important; border: none !important;
+            color: transparent !important; /* 글자와 이모지도 투명하게 */
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* 도구들 */
-        #mode-draw { top: 25%; left: 9.7%; width: 60px; height: 50px; }
+        /* 메인 도구 버튼들 */
+        #mode-draw { top: 25%; left: 9.7%; width: 60px; height: 50px; } 
         #mode-spray { top: 32%; left: 9.7%; width: 60px; height: 50px; }
-        #add-triangle { top: 38.8%; left: 9.7%; width: 60px; height: 50px; }
-        #clear-btn { top: 45%; left: 9.7%; width: 60px; height: 55px; background-color: rgba(255,59,48,0.5); }
-        #submit-btn { top: 8%; left: 15.5%; width: 230px; height: 40px; background-color: rgba(52, 199, 89, 0.5); }
+        #btn-shapes { top: 38.8%; left: 9.7%; width: 60px; height: 50px; } 
+        #clear-btn { top: 45%; left: 9.7%; width: 60px; height: 55px; }
+        #submit-btn { top: 8%; left: 15.5%; width: 230px; height: 40px; }
+        
+        #btn-help { top: 8%; left: 73%; width: 175px; height: 50px; }
+        #btn-credits { top: 8%; left: 81.6%; width: 175px; height: 50px; }
 
-        /* 색상 버튼들 */
-        #c-white { top: 31%; left: 85%; width: 30px; height: 30px; background-color: rgba(255,255,255,0.7); color: black;}
-        #c-black { top: 31%; left: 87.3%; width: 30px; height: 30px; background-color: rgba(0,0,0,0.7);}
+        /* 팝업창 공통 스타일 */
+        .popup-panel {
+            position: absolute;
+            display: none; 
+            z-index: 20;
+            pointer-events: auto; 
+            color: transparent; text-align: center; /* 글자 숨김 */
+            background-color: transparent; border: none;
+        }
+
+        /* =========================================
+           🌟 1. 선 그리기 팝업 (draw.png) 및 굵기 버튼
+           ========================================= */
+        #popup-thickness { 
+            top: 23%; left: 13.5%; 
+            width: 180px; height: 160px; 
+            background-image: url('draw.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+        /* 👉 1px, 3px, 5px, 8px 개별 위치 및 크기 (팝업창 기준) */
+        #thick-1 { top: 10%; left: 20%; width: 130px; height: 30px; }
+        #thick-3 { top: 30%; left: 20%; width: 130px; height: 30px; }
+        #thick-5 { top: 50%; left: 20%; width: 130px; height: 30px; }
+        #thick-8 { top: 70%; left: 20%; width: 130px; height: 30px; }
+
+
+        /* =========================================
+           🌟 2. 도형 선택 팝업 (cube.png) 및 9개 버튼
+           ========================================= */
+        #popup-shapes { 
+            top: 38.8%; left: 13.5%; 
+            width: 180px; height: 180px; 
+            background-image: url('cube.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+        /* 👉 9개 도형 개별 위치 및 크기 (팝업창 기준) */
+        #shape-heart  { top: 10%; left: 10%; width: 40px; height: 40px; }
+        #shape-star   { top: 10%; left: 38%; width: 40px; height: 40px; }
+        #shape-speech { top: 10%; left: 66%; width: 40px; height: 40px; }
+        #shape-rect     { top: 38%; left: 10%; width: 40px; height: 40px; }
+        #shape-triangle { top: 38%; left: 38%; width: 40px; height: 40px; }
+        #shape-cloud    { top: 38%; left: 66%; width: 40px; height: 40px; }
+        #shape-lightning { top: 66%; left: 10%; width: 40px; height: 40px; }
+        #shape-arrow     { top: 66%; left: 38%; width: 40px; height: 40px; }
+        #shape-circle    { top: 66%; left: 66%; width: 40px; height: 40px; }
+
+
+        /* =========================================
+           🌟 3. 크레딧 팝업 (credit.png)
+           👉 여기 top / left / width / height 값만 바꾸면 위치·크기 조절됨
+              (top, left는 팝업의 "중심점" 좌표 - transform이 중심 정렬을 해줌)
+           ========================================= */
+        #popup-credits { 
+            width: 70%; height: 70%; 
+            top: 40%; left: 62%; 
+            transform: translate(-50%, -50%); 
+            background-image: url('credit.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+
+        /* =========================================
+           🌟 4. 제출 팝업 (send.png)
+           👉 여기 top / left / width / height 값만 바꾸면 위치·크기 조절됨
+              (top, left는 팝업의 "중심점" 좌표 - transform이 중심 정렬을 해줌)
+           ========================================= */
+        #popup-send { 
+            width: 50%; height: 50%; 
+            top: 54%; left: 52%; 
+            transform: translate(-50%, -50%); 
+            background-image: url('send.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            z-index: 9999; /* 화면 제일 위에 뜨도록 설정 */
+        }
+
+        /* =========================================
+           🌟 5. 도움말 팝업 (doum.png)
+           👉 여기 top / left / width / height 값만 바꾸면 위치·크기 조절됨
+              (top, left는 팝업의 "중심점" 좌표 - transform이 중심 정렬을 해줌)
+           ========================================= */
+        #popup-help { 
+            width: 43%; height: 43%; 
+            top: 30%; left: 74.5%; 
+            transform: translate(-50%, -50%); 
+            background-image: url('doum.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        /* 색상 팔레트 위치 (색상 버튼도 투명화 완료) */
+        #c-white { top: 31%; left: 85%; width: 30px; height: 30px; }
+        #c-black { top: 31%; left: 87.3%; width: 30px; height: 30px; }
         #c-gray { top: 36%; left: 85%; width: 30px; height: 30px; }
         #c-darkgray { top: 36%; left: 87.3%; width: 30px; height: 30px; }
         #c-red { top: 41%; left: 85%; width: 30px; height: 30px; }
         #c-darkred { top: 41%; left: 87.3%; width: 30px; height: 30px; }
-        #c-yellow { top: 46%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-yellow { top: 46%; left: 85%; width: 30px; height: 30px; }
         #c-darkyellow { top: 46%; left: 87.3%; width: 30px; height: 30px; }
         #c-green { top: 51%; left: 85%; width: 30px; height: 30px; }
         #c-darkgreen { top: 51%; left: 87.3%; width: 30px; height: 30px; }
-        #c-mint { top: 56%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-mint { top: 56%; left: 85%; width: 30px; height: 30px; }
         #c-darkmint { top: 56%; left: 87.3%; width: 30px; height: 30px; }
         #c-blue { top: 60.8%; left: 85%; width: 30px; height: 30px; }
         #c-darkblue { top: 60.8%; left: 87.3%; width: 30px; height: 30px; }
         #c-purple { top: 65.7%; left: 85%; width: 30px; height: 30px; }
         #c-darkpurple { top: 65.7%; left: 87.3%; width: 30px; height: 30px; }
-        #c-skin { top: 70.6%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-skin { top: 70.6%; left: 85%; width: 30px; height: 30px; }
         #c-darkskin { top: 70.6%; left: 87.3%; width: 30px; height: 30px; }
-        #c-greenmint { top: 75.4%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-greenmint { top: 75.4%; left: 85%; width: 30px; height: 30px; }
         #c-darkgreenmint { top: 75.4%; left: 87.3%; width: 30px; height: 30px; }
-        #c-skyblue { top: 80.1%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-skyblue { top: 80.1%; left: 85%; width: 30px; height: 30px; }
         #c-darkskyblue { top: 80.1%; left: 87.3%; width: 30px; height: 30px; }
-        #c-lightpurple { top: 85%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-lightpurple { top: 85%; left: 85%; width: 30px; height: 30px; }
         #c-darklightpurple { top: 85%; left: 87.3%; width: 30px; height: 30px; }
-        #c-pink { top: 89.7%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-pink { top: 89.7%; left: 85%; width: 30px; height: 30px; }
         #c-magenta { top: 89.7%; left: 87.3%; width: 30px; height: 30px; }
-        #c-orange { top: 94.4%; left: 85%; width: 30px; height: 30px; color: black; }
+        #c-orange { top: 94.4%; left: 85%; width: 30px; height: 30px; }
         #c-brown { top: 94.4%; left: 87.3%; width: 30px; height: 30px; }
     </style>
 </head>
 <body>
 
-    <div id="rotate-msg"><div><span style="font-size: 50px;">📱</span><p>기기를 가로로 돌려주세요!</p></div></div>
+    <div id="rotate-msg"></div>
 
     <svg width="0" height="0" style="position: absolute; pointer-events: none; z-1: -1;">
         <filter id="pixel-filter">
@@ -128,9 +228,40 @@
 
             <div id="mode-draw" class="hidden-btn">선그리기</div>
             <div id="mode-spray" class="hidden-btn">스프레이</div>
-            <div id="add-triangle" class="hidden-btn">삼각형</div>
-            <div id="clear-btn" class="hidden-btn">지우기</div>
+            <div id="btn-shapes" class="hidden-btn">도형</div>
+            
+            <div id="clear-btn" class="hidden-btn">되돌리기</div>
             <div id="submit-btn" class="hidden-btn">제출</div>
+            
+            <div id="btn-help" class="hidden-btn">도움말</div>
+            <div id="btn-credits" class="hidden-btn">크레딧</div>
+
+            <div id="popup-thickness" class="popup-panel">
+                <div id="thick-1" class="thickness-option" data-width="1">1px</div>
+                <div id="thick-3" class="thickness-option" data-width="3">3px</div>
+                <div id="thick-5" class="thickness-option" data-width="5">5px</div>
+                <div id="thick-8" class="thickness-option" data-width="8">8px</div>
+            </div>
+
+            <div id="popup-shapes" class="popup-panel">
+                <div id="shape-heart" class="shape-option" data-shape="heart">💖</div>
+                <div id="shape-star" class="shape-option" data-shape="star">⭐</div>
+                <div id="shape-speech" class="shape-option" data-shape="speech">💬</div>
+                
+                <div id="shape-rect" class="shape-option" data-shape="rect">🟦</div>
+                <div id="shape-triangle" class="shape-option" data-shape="triangle">🔺</div>
+                <div id="shape-cloud" class="shape-option" data-shape="cloud">☁️</div>
+                
+                <div id="shape-lightning" class="shape-option" data-shape="lightning">⚡</div>
+                <div id="shape-arrow" class="shape-option" data-shape="arrow">➡️</div>
+                <div id="shape-circle" class="shape-option" data-shape="circle">🔴</div>
+            </div>
+
+            <div id="popup-help" class="popup-panel large-popup"></div>
+
+            <div id="popup-credits" class="popup-panel"></div>
+
+            <div id="popup-send" class="popup-panel"></div>
 
             <div id="c-white" class="hidden-btn color-btn" data-color="#ffffff">흰색</div>
             <div id="c-black" class="hidden-btn color-btn" data-color="#353130">검은색</div>
@@ -167,9 +298,10 @@
         const bgImageUrl = 'image_0.png'; 
         const canvas = new fabric.Canvas('gameCanvas', { isDrawingMode: true });
         let activeColor = '#ffffff'; 
+        let currentBrushWidth = 5; 
 
         canvas.freeDrawingBrush.color = activeColor;
-        canvas.freeDrawingBrush.width = 5;
+        canvas.freeDrawingBrush.width = currentBrushWidth;
         canvas.freeDrawingBrush.strokeLineCap = 'square'; 
         canvas.freeDrawingBrush.strokeLineJoin = 'miter'; 
 
@@ -240,20 +372,113 @@
 
         const changeMode = (draw) => { canvas.isDrawingMode = draw; };
 
+        function closeAllToolPopups() {
+            document.getElementById('popup-thickness').style.display = 'none';
+            document.getElementById('popup-shapes').style.display = 'none';
+        }
+
         document.getElementById('mode-draw').addEventListener('click', () => {
             canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
             canvas.freeDrawingBrush.color = activeColor;
-            canvas.freeDrawingBrush.width = 5;
+            canvas.freeDrawingBrush.width = currentBrushWidth;
             canvas.freeDrawingBrush.strokeLineCap = 'square'; 
             canvas.freeDrawingBrush.strokeLineJoin = 'miter'; 
             changeMode(true);
+            
+            const popup = document.getElementById('popup-thickness');
+            const isShowing = popup.style.display === 'block';
+            closeAllToolPopups();
+            if (!isShowing) popup.style.display = 'block';
+        });
+
+        document.querySelectorAll('.thickness-option').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                currentBrushWidth = parseInt(e.target.getAttribute('data-width'), 10);
+                if(canvas.freeDrawingBrush) {
+                    canvas.freeDrawingBrush.width = currentBrushWidth;
+                }
+                document.getElementById('popup-thickness').style.display = 'none';
+            });
         });
 
         document.getElementById('mode-spray').addEventListener('click', () => {
+            closeAllToolPopups(); 
             canvas.freeDrawingBrush = new fabric.SprayBrush(canvas);
             canvas.freeDrawingBrush.color = activeColor;
             canvas.freeDrawingBrush.width = 15;
             changeMode(true);
+        });
+
+        document.getElementById('btn-shapes').addEventListener('click', () => {
+            const popup = document.getElementById('popup-shapes');
+            const isShowing = popup.style.display === 'block';
+            closeAllToolPopups();
+            if (!isShowing) popup.style.display = 'block';
+        });
+
+        document.querySelectorAll('.shape-option').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                changeMode(false);
+                const shapeType = e.target.getAttribute('data-shape');
+                const commonProps = {
+                    top: canvas.height / 2 - 40, 
+                    left: canvas.width / 2 - 40, 
+                    fill: activeColor 
+                };
+                
+                let newShape;
+                
+                if (shapeType === 'heart') {
+                    newShape = new fabric.Path('M 40 80 C 40 80 0 50 0 20 C 0 0 30 0 40 20 C 50 0 80 0 80 20 C 80 50 40 80 40 80 Z', { ...commonProps });
+                } else if (shapeType === 'star') {
+                    const starPoints = [
+                        {x: 40, y: 0}, {x: 52, y: 28}, {x: 80, y: 28},
+                        {x: 57, y: 45}, {x: 66, y: 75}, {x: 40, y: 56},
+                        {x: 14, y: 75}, {x: 23, y: 45}, {x: 0, y: 28}, {x: 28, y: 28}
+                    ];
+                    newShape = new fabric.Polygon(starPoints, { ...commonProps });
+                } else if (shapeType === 'speech') {
+                    const speechPoints = [
+                        {x:10,y:10}, {x:70,y:10}, {x:70,y:50}, {x:50,y:50}, {x:30,y:70}, {x:30,y:50}, {x:10,y:50}
+                    ];
+                    newShape = new fabric.Polygon(speechPoints, { ...commonProps });
+                } else if (shapeType === 'rect') {
+                    newShape = new fabric.Rect({ ...commonProps, width: 80, height: 80 });
+                } else if (shapeType === 'triangle') {
+                    newShape = new fabric.Triangle({ ...commonProps, width: 80, height: 80 });
+                } else if (shapeType === 'cloud') {
+                    newShape = new fabric.Path('M 25 50 Q 10 50 10 35 Q 10 20 25 20 C 25 5 55 5 55 20 Q 75 20 75 35 Q 75 50 55 50 Z', { ...commonProps });
+                } else if (shapeType === 'lightning') {
+                    const lightningPoints = [
+                        {x:40,y:0}, {x:10,y:40}, {x:35,y:40}, {x:25,y:80}, {x:70,y:30}, {x:45,y:30}
+                    ];
+                    newShape = new fabric.Polygon(lightningPoints, { ...commonProps });
+                } else if (shapeType === 'arrow') {
+                    const arrowPoints = [
+                        {x:0,y:25}, {x:50,y:25}, {x:50,y:10}, {x:80,y:40}, {x:50,y:70}, {x:50,y:55}, {x:0,y:55}
+                    ];
+                    newShape = new fabric.Polygon(arrowPoints, { ...commonProps });
+                } else if (shapeType === 'circle') {
+                    newShape = new fabric.Circle({ ...commonProps, radius: 40 });
+                }
+                
+                if (newShape) {
+                    canvas.add(newShape);
+                }
+                document.getElementById('popup-shapes').style.display = 'none';
+            });
+        });
+
+        document.getElementById('btn-help').addEventListener('click', () => {
+            const popup = document.getElementById('popup-help');
+            const isShowing = popup.style.display === 'block';
+            popup.style.display = isShowing ? 'none' : 'block';
+        });
+
+        document.getElementById('btn-credits').addEventListener('click', () => {
+            const popup = document.getElementById('popup-credits');
+            const isShowing = popup.style.display === 'block';
+            popup.style.display = isShowing ? 'none' : 'block';
         });
 
         document.querySelectorAll('.color-btn').forEach(btn => {
@@ -263,22 +488,52 @@
             });
         });
 
-        document.getElementById('add-triangle').addEventListener('click', () => {
-            changeMode(false);
-            const triangle = new fabric.Triangle({
-                top: canvas.height / 2 - 40, left: canvas.width / 2 - 40, 
-                width: 80, height: 80, fill: activeColor 
-            });
-            canvas.add(triangle);
-        });
-
         document.getElementById('clear-btn').addEventListener('click', () => {
-            canvas.getObjects().forEach((obj) => { canvas.remove(obj); });
-            canvas.renderAll();
+            const objects = canvas.getObjects();
+            if (objects.length > 0) {
+                const lastObj = objects[objects.length - 1];
+                canvas.remove(lastObj);
+                canvas.renderAll();
+            }
         });
 
-        // 🌟 Vercel Blob 서버로 알파 그림 전송하는 핵심 로직!
+        // 🌟 아무 곳이나 클릭(터치)하면 send / help / credits 팝업을 숨기는 이벤트
+        document.addEventListener('pointerdown', (e) => {
+            const sendPopup = document.getElementById('popup-send');
+            // send 팝업이 열려있는데, 클릭한 대상이 제출 버튼이 아닐 경우 닫기
+            if (sendPopup.style.display === 'block' && e.target.id !== 'submit-btn') {
+                sendPopup.style.display = 'none';
+            }
+
+            const helpPopup = document.getElementById('popup-help');
+            // 도움말 팝업이 열려있는데, 클릭한 대상이 도움말 버튼이 아닐 경우 닫기
+            if (helpPopup.style.display === 'block' && e.target.id !== 'btn-help') {
+                helpPopup.style.display = 'none';
+            }
+
+            const creditsPopup = document.getElementById('popup-credits');
+            // 크레딧 팝업이 열려있는데, 클릭한 대상이 크레딧 버튼이 아닐 경우 닫기
+            if (creditsPopup.style.display === 'block' && e.target.id !== 'btn-credits') {
+                creditsPopup.style.display = 'none';
+            }
+        });
+
+        // 🌟 서버가 아직 준비되지 않았다면 false로 두세요 (오류 팝업 없이 조용히 스킵됩니다)
+        // 서버(/api/upload)를 연결하고 나면 true로 바꾸면 됩니다.
+        const SERVER_ENABLED = false;
+
         document.getElementById('submit-btn').addEventListener('click', () => {
+            // 🌟 버튼 클릭 시 send.png 팝업 바로 띄우기
+            document.getElementById('popup-send').style.display = 'block';
+
+            const submitBtn = document.getElementById('submit-btn');
+
+            if (!SERVER_ENABLED) {
+                // 서버 없이 로컬 테스트할 때: 오류 alert 없이 콘솔에만 로그 남기고 종료
+                console.log("(테스트 모드) 서버 미연결 - 업로드 스킵됨");
+                return;
+            }
+
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = canvas.width;
             tempCanvas.height = canvas.height;
@@ -295,17 +550,13 @@
 
             const alphaDataUrl = tempCanvas.toDataURL({ format: 'png', quality: 1.0 });
 
-            // 1. 서버로 보낼 정보 세팅
             const payload = {
                 image: alphaDataUrl,
                 filename: `artwork_${Date.now()}.png`
             };
 
-            // 버튼 비활성화 (여러 번 누르는 것 방지)
-            const submitBtn = document.getElementById('submit-btn');
             submitBtn.style.pointerEvents = 'none';
 
-            // 2. Vercel 서버리스 함수 호출
             fetch('/api/upload', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -315,16 +566,15 @@
             .then(result => {
                 submitBtn.style.pointerEvents = 'auto';
                 if(result.success) {
-                    alert("서버에 성공적으로 저장되었습니다! 🎉");
                     console.log("저장된 이미지 주소:", result.url);
                 } else {
-                    alert("저장 실패: " + result.error);
+                    console.error("저장 실패: " + result.error);
                 }
             })
             .catch(error => {
                 submitBtn.style.pointerEvents = 'auto';
                 console.error('Error:', error);
-                alert("서버 통신 중 오류가 발생했습니다.");
+                // alert 제거 - 콘솔에만 남김 (서버 없이 테스트 중 오류 팝업 방지)
             });
         });
     </script>
