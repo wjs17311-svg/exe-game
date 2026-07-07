@@ -8,6 +8,11 @@
     <title>NouerA 페인터 꾸미기</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <style>
+        :root {
+            /* 👉 이 값을 조절하면 게임 전체가 위/아래로 이동합니다. (양수 = 아래로 내려감, 음수 = 위로 올라감) */
+            --game-offset-y: 40px;
+        }
+
         html, body { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
             height: 100dvh;
@@ -31,6 +36,7 @@
 
         .game-container { 
             width: 100vw; height: 100vh; height: 100dvh; position: relative; touch-action: none; 
+            transform: translateY(var(--game-offset-y));
         }
 
         /* =========================================
