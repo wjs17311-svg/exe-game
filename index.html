@@ -17,7 +17,7 @@
         @media (hover: none) and (pointer: coarse) {
             :root {
                 /* 👉 이 값을 조절하면 모바일에서만 게임이 위/아래로 이동합니다. (양수 = 아래로) */
-                --game-offset-y: 58px;
+                --game-offset-y: 40px;
             }
         }
 
@@ -56,7 +56,7 @@
         #rotate-msg { 
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; 
             box-sizing: border-box;
-            padding: 2.0%; /* 👉 이 값을 조절하면 이미지 크기(현재 약 97%)가 바뀝니다 */
+            padding: 1.5%; /* 👉 이 값을 조절하면 이미지 크기(현재 약 97%)가 바뀝니다 */
             background-image: url('rotate.png');
             background-size: contain; /* 이미지가 절대 잘리지 않고 영역 안에 꽉 맞게 들어감 */
             background-origin: content-box;
@@ -118,7 +118,7 @@
            🌟 1. 선 그리기 팝업 (draw.png) 및 굵기 버튼
            ========================================= */
         #popup-thickness { 
-            top: 19%; left: 13.5%; 
+            top: 23%; left: 13.5%; 
             width: 180px; height: 160px; 
             background-image: url('draw.png');
             background-size: 100% 100%;
@@ -135,7 +135,7 @@
            🌟 2. 도형 선택 팝업 (cube.png) 및 9개 버튼
            ========================================= */
         #popup-shapes { 
-            top: 30%; left: 13.5%; 
+            top: 38.8%; left: 13.5%; 
             width: 180px; height: 180px; 
             background-image: url('cube.png');
             background-size: 100% 100%;
@@ -572,12 +572,17 @@
                 return;
             }
 
+            // 🌟 canvas.width/height는 논리적(CSS) 크기라서, devicePixelRatio가 높은
+            //    모바일(레티나 등)에서는 실제 캔버스 픽셀 크기보다 작음.
+            //    반드시 getElement()의 실제 width/height(내부 픽셀 버퍼 크기)를 써야
+            //    이미지가 잘리지 않고 전체가 정상적으로 저장됨.
+            const canvasEl = canvas.getElement();
             const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
+            tempCanvas.width = canvasEl.width;
+            tempCanvas.height = canvasEl.height;
             const tempCtx = tempCanvas.getContext('2d');
             
-            tempCtx.drawImage(canvas.getElement(), 0, 0);
+            tempCtx.drawImage(canvasEl, 0, 0);
             
             const imgData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
             const data = imgData.data;
