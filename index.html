@@ -555,9 +555,10 @@
             }
         });
 
-        // 🌟 서버가 아직 준비되지 않았다면 false로 두세요 (오류 팝업 없이 조용히 스킵됩니다)
-        // 서버(/api/upload)를 연결하고 나면 true로 바꾸면 됩니다.
-        const SERVER_ENABLED = false;
+        // 🌟 서버(/api/upload)가 배포되어 있으므로 활성화
+        const SERVER_ENABLED = true;
+        // 🌟 왜 저장이 안 되는지 확인하고 싶을 때만 true로 바꾸세요 (에러 내용을 화면에 잠깐 띄워줌)
+        const DEBUG_MODE = false;
 
         document.getElementById('submit-btn').addEventListener('click', () => {
             // 🌟 버튼 클릭 시 send.png 팝업 바로 띄우기
@@ -599,18 +600,28 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    // 서버가 200이 아닌 응답(400, 404, 413, 500 등)을 준 경우도 잡아냄
+                    return response.text().then(text => {
+                        throw new Error(`HTTP ${response.status}: ${text}`);
+                    });
+                }
+                return response.json();
+            })
             .then(result => {
                 submitBtn.style.pointerEvents = 'auto';
                 if(result.success) {
                     console.log("저장된 이미지 주소:", result.url);
                 } else {
                     console.error("저장 실패: " + result.error);
+                    if (DEBUG_MODE) alert("저장 실패: " + result.error);
                 }
             })
             .catch(error => {
                 submitBtn.style.pointerEvents = 'auto';
                 console.error('Error:', error);
+                if (DEBUG_MODE) alert("업로드 에러: " + error.message);
                 // alert 제거 - 콘솔에만 남김 (서버 없이 테스트 중 오류 팝업 방지)
             });
         });
