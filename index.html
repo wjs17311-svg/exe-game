@@ -41,8 +41,12 @@
            ========================================= */
         #rotate-msg { 
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; 
+            box-sizing: border-box;
+            padding: 1.5%; /* 👉 이 값을 조절하면 이미지 크기(현재 약 97%)가 바뀝니다 */
             background-image: url('rotate.png');
-            background-size: 95%;
+            background-size: contain; /* 이미지가 절대 잘리지 않고 영역 안에 꽉 맞게 들어감 */
+            background-origin: content-box;
+            background-clip: content-box;
             background-position: center;
             background-repeat: no-repeat;
             z-index: 9999; justify-content: center; align-items: center; text-align: center; 
@@ -370,8 +374,19 @@
 
         window.addEventListener('resize', resizeCanvasToWindow);
         window.addEventListener("orientationchange", function() {
+            // 사파리 주소창이 사라지는 애니메이션이 끝날 때까지 여러 번 재계산
+            setTimeout(resizeCanvasToWindow, 100);
             setTimeout(resizeCanvasToWindow, 300);
+            setTimeout(resizeCanvasToWindow, 600);
+            setTimeout(resizeCanvasToWindow, 1000);
         });
+
+        // 🌟 iOS 사파리는 주소창이 사라지면서 실제 보이는 화면 크기가 바뀌는데,
+        //    resize 이벤트가 안 뜨는 경우가 있어서 visualViewport로 따로 감지함
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', resizeCanvasToWindow);
+            window.visualViewport.addEventListener('scroll', resizeCanvasToWindow);
+        }
 
         const changeMode = (draw) => { canvas.isDrawingMode = draw; };
 
