@@ -19,87 +19,119 @@
             image-rendering: crisp-edges;
         }
         
-        .canvas-container { filter: url(#pixel-filter); }
+        .canvas-container {
+            position: absolute !important;
+            top: 0; left: 0;
+            z-index: 5;
+            filter: url(#pixel-filter);
+        }
 
         .game-container { 
             width: 100vw; height: 100vh; position: relative; touch-action: none; 
         }
 
         /* 📱 가로 회전 안내판 */
-        #rotate-msg {
-            display: none; position: fixed; top: 0; left: 0; 
-            width: 100vw; height: 100vh; background: #333; 
-            color: white; z-index: 9999; justify-content: center; 
-            align-items: center; text-align: center; font-family: sans-serif;
-        }
-        @media screen and (orientation: portrait) {
-            #rotate-msg { display: flex; }
-            .game-container { display: none; }
+        #rotate-msg { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #333; color: white; z-index: 9999; justify-content: center; align-items: center; text-align: center; }
+        @media screen and (orientation: portrait) { #rotate-msg { display: flex; } .game-container { display: none; } }
+
+        /* 배경 이미지 */
+        #bg-img {
+            position: absolute;
+            z-index: 1; 
+            pointer-events: none;
         }
 
-        #ui-layer { position: absolute; z-index: 10; pointer-events: none; }
+        #ui-layer {
+            position: absolute; z-index: 10; pointer-events: none; 
+        }
+
+        /* 그리기 제한 박스 */
+        #draw-area { 
+            position: absolute; 
+            top: 17.5%;      
+            left: 13.5%;     
+            width: 69.5%;    
+            height: 100%;   
+            background-color: transparent !important; 
+            border: none !important; 
+            pointer-events: none; 
+            z-index: 1; 
+        }
 
         .hidden-btn {
-            position: absolute; pointer-events: auto; cursor: pointer;
+            position: absolute; 
+            pointer-events: auto; 
+            cursor: pointer;
             background-color: transparent !important;
-            border: none !important; color: transparent !important;
+            border: none !important;
+            color: transparent !important;
             opacity: 0 !important; 
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* 버튼 배치 */
+        /* 도구들 */
         #mode-draw { top: 25%; left: 9.7%; width: 60px; height: 50px; }
         #mode-spray { top: 32%; left: 9.7%; width: 60px; height: 50px; }
         #add-triangle { top: 38.8%; left: 9.7%; width: 60px; height: 50px; }
-        #clear-btn { top: 45%; left: 9.7%; width: 60px; height: 55px; }
-        #submit-btn { top: 8%; left: 15.5%; width: 230px; height: 40px; }
+        #clear-btn { top: 45%; left: 9.7%; width: 60px; height: 55px; background-color: rgba(255,59,48,0.5); }
+        #submit-btn { top: 8%; left: 15.5%; width: 230px; height: 40px; background-color: rgba(52, 199, 89, 0.5); }
 
         /* 색상 버튼들 */
-        #c-white { top: 31%; left: 85%; width: 30px; height: 30px; }
-        #c-black { top: 31%; left: 87.3%; width: 30px; height: 30px; }
+        #c-white { top: 31%; left: 85%; width: 30px; height: 30px; background-color: rgba(255,255,255,0.7); color: black;}
+        #c-black { top: 31%; left: 87.3%; width: 30px; height: 30px; background-color: rgba(0,0,0,0.7);}
         #c-gray { top: 36%; left: 85%; width: 30px; height: 30px; }
         #c-darkgray { top: 36%; left: 87.3%; width: 30px; height: 30px; }
         #c-red { top: 41%; left: 85%; width: 30px; height: 30px; }
         #c-darkred { top: 41%; left: 87.3%; width: 30px; height: 30px; }
-        #c-yellow { top: 46%; left: 85%; width: 30px; height: 30px; }
+        #c-yellow { top: 46%; left: 85%; width: 30px; height: 30px; color: black; }
         #c-darkyellow { top: 46%; left: 87.3%; width: 30px; height: 30px; }
         #c-green { top: 51%; left: 85%; width: 30px; height: 30px; }
         #c-darkgreen { top: 51%; left: 87.3%; width: 30px; height: 30px; }
-        #c-mint { top: 56%; left: 85%; width: 30px; height: 30px; }
+        #c-mint { top: 56%; left: 85%; width: 30px; height: 30px; color: black; }
         #c-darkmint { top: 56%; left: 87.3%; width: 30px; height: 30px; }
         #c-blue { top: 60.8%; left: 85%; width: 30px; height: 30px; }
         #c-darkblue { top: 60.8%; left: 87.3%; width: 30px; height: 30px; }
         #c-purple { top: 65.7%; left: 85%; width: 30px; height: 30px; }
         #c-darkpurple { top: 65.7%; left: 87.3%; width: 30px; height: 30px; }
-        #c-skin { top: 70.6%; left: 85%; width: 30px; height: 30px; }
+        #c-skin { top: 70.6%; left: 85%; width: 30px; height: 30px; color: black; }
         #c-darkskin { top: 70.6%; left: 87.3%; width: 30px; height: 30px; }
-        #c-greenmint { top: 75.4%; left: 85%; width: 30px; height: 30px; }
+        #c-greenmint { top: 75.4%; left: 85%; width: 30px; height: 30px; color: black; }
         #c-darkgreenmint { top: 75.4%; left: 87.3%; width: 30px; height: 30px; }
-        #c-skyblue { top: 80.1%; left: 85%; width: 30px; height: 30px; }
+        #c-skyblue { top: 80.1%; left: 85%; width: 30px; height: 30px; color: black; }
         #c-darkskyblue { top: 80.1%; left: 87.3%; width: 30px; height: 30px; }
-        #c-lightpurple { top: 85%; left: 85%; width: 30px; height: 30px; }
+        #c-lightpurple { top: 85%; left: 85%; width: 30px; height: 30px; color: black; }
         #c-darklightpurple { top: 85%; left: 87.3%; width: 30px; height: 30px; }
-        #c-pink { top: 89.7%; left: 85%; width: 30px; height: 30px; }
+        #c-pink { top: 89.7%; left: 85%; width: 30px; height: 30px; color: black; }
         #c-magenta { top: 89.7%; left: 87.3%; width: 30px; height: 30px; }
-        #c-orange { top: 94.4%; left: 85%; width: 30px; height: 30px; }
+        #c-orange { top: 94.4%; left: 85%; width: 30px; height: 30px; color: black; }
         #c-brown { top: 94.4%; left: 87.3%; width: 30px; height: 30px; }
     </style>
 </head>
 <body>
+
     <div id="rotate-msg"><div><span style="font-size: 50px;">📱</span><p>기기를 가로로 돌려주세요!</p></div></div>
 
     <svg width="0" height="0" style="position: absolute; pointer-events: none; z-index: -1;">
-        <filter id="pixel-filter"><feComponentTransfer><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer></filter>
+        <filter id="pixel-filter">
+            <feComponentTransfer>
+                <feFuncA type="discrete" tableValues="0 1"/>
+            </feComponentTransfer>
+        </filter>
     </svg>
 
     <div class="game-container">
+        <img id="bg-img" src="" alt="background">
         <canvas id="gameCanvas"></canvas>
+
         <div id="ui-layer">
+            <div id="draw-area"></div>
+
             <div id="mode-draw" class="hidden-btn">선그리기</div>
             <div id="mode-spray" class="hidden-btn">스프레이</div>
             <div id="add-triangle" class="hidden-btn">삼각형</div>
             <div id="clear-btn" class="hidden-btn">지우기</div>
             <div id="submit-btn" class="hidden-btn">제출</div>
+
             <div id="c-white" class="hidden-btn color-btn" data-color="#ffffff">흰색</div>
             <div id="c-black" class="hidden-btn color-btn" data-color="#353130">검은색</div>
             <div id="c-gray" class="hidden-btn color-btn" data-color="#cac9bf">회색</div>
@@ -130,15 +162,13 @@
             <div id="c-brown" class="hidden-btn color-btn" data-color="#803c21">갈색</div>
         </div>
     </div>
+
     <script>
-        const targetScaleOffset = 2.05; 
-        const targetOffsetX = -90; 
-        const targetOffsetY = 240; 
         const bgImageUrl = 'image_0.png'; 
-        const randomNum = Math.floor(Math.random() * 527); 
-        const randomTargetUrl = `forexe${String(randomNum).padStart(3, '0')}.jpg`; 
+        
         const canvas = new fabric.Canvas('gameCanvas', { isDrawingMode: true });
-        let randomTargetObj = null, activeColor = '#ffffff'; 
+        
+        let activeColor = '#ffffff'; 
 
         canvas.freeDrawingBrush.color = activeColor;
         canvas.freeDrawingBrush.width = 5;
@@ -146,41 +176,146 @@
         canvas.freeDrawingBrush.strokeLineJoin = 'miter'; 
 
         function resizeCanvasToWindow() {
-            const windowWidth = window.innerWidth, windowHeight = window.innerHeight;
-            canvas.setWidth(windowWidth); canvas.setHeight(windowHeight);
-            if (canvas.backgroundImage) {
-                const bgImg = canvas.backgroundImage;
-                const mainScale = Math.max(windowWidth / bgImg.width, windowHeight / bgImg.height); 
-                bgImg.set({ scaleX: mainScale, scaleY: mainScale, left: windowWidth/2, top: windowHeight/2, originX: 'center', originY: 'center' });
-                if (randomTargetObj) {
-                    randomTargetObj.set({ scaleX: mainScale * targetScaleOffset, scaleY: mainScale * targetScaleOffset, left: (windowWidth/2) + (targetOffsetX * mainScale), top: (windowHeight/2) + (targetOffsetY * mainScale) });
-                }
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            canvas.setWidth(windowWidth);
+            canvas.setHeight(windowHeight);
+
+            if (window.globalBgImg) {
+                const bgImg = window.globalBgImg;
+                const scaleX = windowWidth / bgImg.width;
+                const scaleY = windowHeight / bgImg.height;
+                const mainScale = Math.max(scaleX, scaleY); 
+
+                const htmlBg = document.getElementById('bg-img');
+                htmlBg.style.width = (bgImg.width * mainScale) + 'px';
+                htmlBg.style.height = (bgImg.height * mainScale) + 'px';
+                htmlBg.style.left = (windowWidth / 2) + 'px';
+                htmlBg.style.top = (windowHeight / 2) + 'px';
+                htmlBg.style.transform = 'translate(-50%, -50%)';
+                
                 canvas.renderAll();
-                document.getElementById('ui-layer').style.cssText = `width:${bgImg.width*mainScale}px; height:${bgImg.height*mainScale}px; left:${(windowWidth - bgImg.width*mainScale)/2}px; top:${(windowHeight - bgImg.height*mainScale)/2}px;`;
+
+                const uiLayer = document.getElementById('ui-layer');
+                const imgRenderWidth = bgImg.width * mainScale;
+                const imgRenderHeight = bgImg.height * mainScale;
+                const imgLeft = (windowWidth - imgRenderWidth) / 2;
+                const imgTop = (windowHeight - imgRenderHeight) / 2;
+
+                uiLayer.style.width = imgRenderWidth + 'px';
+                uiLayer.style.height = imgRenderHeight + 'px';
+                uiLayer.style.left = imgLeft + 'px';
+                uiLayer.style.top = imgTop + 'px';
+
+                setTimeout(() => {
+                    const drawArea = document.getElementById('draw-area');
+                    if(drawArea) {
+                        const rect = drawArea.getBoundingClientRect();
+                        canvas.clipPath = new fabric.Rect({
+                            left: rect.left,
+                            top: rect.top,
+                            width: rect.width,
+                            height: rect.height,
+                            absolutePositioned: true
+                        });
+                        canvas.renderAll();
+                    }
+                }, 50);
             }
         }
+
         fabric.Image.fromURL(bgImageUrl, function(bgImg) {
-            bgImg.set({ selectable: false, evented: false });
-            canvas.setBackgroundImage(bgImg, function() {
-                fabric.Image.fromURL(randomTargetUrl, function(rndImg) {
-                    randomTargetObj = rndImg.set({ selectable: false, evented: false, originX: 'center', originY: 'center' });
-                    canvas.add(randomTargetObj); resizeCanvasToWindow();
-                }, { crossOrigin: 'anonymous' });
-            });
+            if (!bgImg) {
+                alert("배경 이미지(image_0.png)를 찾을 수 없습니다!");
+                return;
+            }
+            
+            window.globalBgImg = bgImg; 
+            document.getElementById('bg-img').src = bgImageUrl;
+
+            // 랜덤 이미지 불러오는 로직이 사라지고, 바로 리사이즈 실행!
+            resizeCanvasToWindow();
+            canvas.freeDrawingBrush.clipPath = null;
         }, { crossOrigin: 'anonymous' });
+
         window.addEventListener('resize', resizeCanvasToWindow);
-        window.addEventListener("orientationchange", () => setTimeout(resizeCanvasToWindow, 300));
-        
-        // 버튼 로직 생략 (기존과 동일)
-        document.getElementById('mode-draw').addEventListener('click', () => { canvas.freeDrawingBrush = new fabric.PencilBrush(canvas); canvas.freeDrawingBrush.color = activeColor; canvas.freeDrawingBrush.width = 5; canvas.freeDrawingBrush.strokeLineCap = 'square'; canvas.freeDrawingBrush.strokeLineJoin = 'miter'; canvas.isDrawingMode = true; });
-        document.getElementById('mode-spray').addEventListener('click', () => { canvas.freeDrawingBrush = new fabric.SprayBrush(canvas); canvas.freeDrawingBrush.color = activeColor; canvas.freeDrawingBrush.width = 15; canvas.isDrawingMode = true; });
-        document.querySelectorAll('.color-btn').forEach(btn => btn.addEventListener('click', (e) => { activeColor = e.target.getAttribute('data-color'); if(canvas.freeDrawingBrush) canvas.freeDrawingBrush.color = activeColor; }));
-        document.getElementById('add-triangle').addEventListener('click', () => { canvas.isDrawingMode = false; canvas.add(new fabric.Triangle({ top: canvas.height/2-40, left: canvas.width/2-40, width: 80, height: 80, fill: activeColor })); });
-        document.getElementById('clear-btn').addEventListener('click', () => { canvas.getObjects().forEach(obj => { if (obj !== randomTargetObj) canvas.remove(obj); }); canvas.renderAll(); });
+        window.addEventListener("orientationchange", function() {
+            setTimeout(resizeCanvasToWindow, 300);
+        });
+
+        const changeMode = (draw) => {
+            canvas.isDrawingMode = draw;
+        };
+
+        document.getElementById('mode-draw').addEventListener('click', () => {
+            canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+            canvas.freeDrawingBrush.color = activeColor;
+            canvas.freeDrawingBrush.width = 5;
+            canvas.freeDrawingBrush.strokeLineCap = 'square'; 
+            canvas.freeDrawingBrush.strokeLineJoin = 'miter'; 
+            changeMode(true);
+        });
+
+        document.getElementById('mode-spray').addEventListener('click', () => {
+            canvas.freeDrawingBrush = new fabric.SprayBrush(canvas);
+            canvas.freeDrawingBrush.color = activeColor;
+            canvas.freeDrawingBrush.width = 15;
+            changeMode(true);
+        });
+
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                activeColor = e.target.getAttribute('data-color');
+                if(canvas.freeDrawingBrush) {
+                    canvas.freeDrawingBrush.color = activeColor;
+                }
+            });
+        });
+
+        document.getElementById('add-triangle').addEventListener('click', () => {
+            changeMode(false);
+            const triangle = new fabric.Triangle({
+                top: canvas.height / 2 - 40, left: canvas.width / 2 - 40, 
+                width: 80, height: 80, fill: activeColor 
+            });
+            canvas.add(triangle);
+        });
+
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            // 이제 보호할 랜덤 이미지가 없으므로, 캔버스 위의 모든 그림을 아주 쉽게 싹 지웁니다.
+            const allObjects = canvas.getObjects();
+            allObjects.forEach((obj) => {
+                canvas.remove(obj);
+            });
+            canvas.renderAll();
+        });
+
         document.getElementById('submit-btn').addEventListener('click', () => {
-            const tempBg = canvas.backgroundImage; canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
-            const link = document.createElement('a'); link.download = `artwork_${Date.now()}.png`; link.href = canvas.toDataURL({ format: 'png', quality: 1.0 }); link.click();
-            canvas.setBackgroundImage(tempBg, canvas.renderAll.bind(canvas));
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            tempCtx.drawImage(canvas.getElement(), 0, 0);
+            
+            const imgData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            const data = imgData.data;
+            for (let i = 3; i < data.length; i += 4) {
+                data[i] = data[i] > 127 ? 255 : 0; 
+            }
+            tempCtx.putImageData(imgData, 0, 0);
+
+            const alphaDataUrl = tempCanvas.toDataURL({ format: 'png', quality: 1.0 });
+
+            const link = document.createElement('a'); 
+            link.download = `my_retro_artwork_${Date.now()}.png`; 
+            link.href = alphaDataUrl; 
+            document.body.appendChild(link);
+            link.click(); 
+            document.body.removeChild(link); 
+
+            alert("그림이 알파(투명) 배경으로 성공적으로 추출되었습니다!");
         });
     </script>
 </body>
