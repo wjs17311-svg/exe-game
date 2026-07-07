@@ -313,8 +313,10 @@
         canvas.freeDrawingBrush.strokeLineJoin = 'miter'; 
 
         function resizeCanvasToWindow() {
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
+            // 🌟 주소창이 떠 있든 사라졌든, 실제로 지금 보이는 화면 크기를 기준으로 맞춤
+            const vv = window.visualViewport;
+            const windowWidth = vv ? vv.width : window.innerWidth;
+            const windowHeight = vv ? vv.height : window.innerHeight;
             canvas.setWidth(windowWidth);
             canvas.setHeight(windowHeight);
 
