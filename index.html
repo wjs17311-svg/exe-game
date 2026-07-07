@@ -111,7 +111,7 @@
 
     <div id="rotate-msg"><div><span style="font-size: 50px;">📱</span><p>기기를 가로로 돌려주세요!</p></div></div>
 
-    <svg width="0" height="0" style="position: absolute; pointer-events: none; z-index: -1;">
+    <svg width="0" height="0" style="position: absolute; pointer-events: none; z-1: -1;">
         <filter id="pixel-filter">
             <feComponentTransfer>
                 <feFuncA type="discrete" tableValues="0 1"/>
@@ -165,9 +165,7 @@
 
     <script>
         const bgImageUrl = 'image_0.png'; 
-        
         const canvas = new fabric.Canvas('gameCanvas', { isDrawingMode: true });
-        
         let activeColor = '#ffffff'; 
 
         canvas.freeDrawingBrush.color = activeColor;
@@ -178,7 +176,6 @@
         function resizeCanvasToWindow() {
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
-
             canvas.setWidth(windowWidth);
             canvas.setHeight(windowHeight);
 
@@ -230,11 +227,8 @@
                 alert("배경 이미지(image_0.png)를 찾을 수 없습니다!");
                 return;
             }
-            
             window.globalBgImg = bgImg; 
             document.getElementById('bg-img').src = bgImageUrl;
-
-            // 랜덤 이미지 불러오는 로직이 사라지고, 바로 리사이즈 실행!
             resizeCanvasToWindow();
             canvas.freeDrawingBrush.clipPath = null;
         }, { crossOrigin: 'anonymous' });
@@ -244,9 +238,7 @@
             setTimeout(resizeCanvasToWindow, 300);
         });
 
-        const changeMode = (draw) => {
-            canvas.isDrawingMode = draw;
-        };
+        const changeMode = (draw) => { canvas.isDrawingMode = draw; };
 
         document.getElementById('mode-draw').addEventListener('click', () => {
             canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
@@ -267,9 +259,7 @@
         document.querySelectorAll('.color-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 activeColor = e.target.getAttribute('data-color');
-                if(canvas.freeDrawingBrush) {
-                    canvas.freeDrawingBrush.color = activeColor;
-                }
+                if(canvas.freeDrawingBrush) { canvas.freeDrawingBrush.color = activeColor; }
             });
         });
 
@@ -283,14 +273,11 @@
         });
 
         document.getElementById('clear-btn').addEventListener('click', () => {
-            // 이제 보호할 랜덤 이미지가 없으므로, 캔버스 위의 모든 그림을 아주 쉽게 싹 지웁니다.
-            const allObjects = canvas.getObjects();
-            allObjects.forEach((obj) => {
-                canvas.remove(obj);
-            });
+            canvas.getObjects().forEach((obj) => { canvas.remove(obj); });
             canvas.renderAll();
         });
 
+        // 🌟 Vercel Blob 서버로 알파 그림 전송하는 핵심 로직!
         document.getElementById('submit-btn').addEventListener('click', () => {
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = canvas.width;
@@ -308,14 +295,37 @@
 
             const alphaDataUrl = tempCanvas.toDataURL({ format: 'png', quality: 1.0 });
 
-            const link = document.createElement('a'); 
-            link.download = `my_retro_artwork_${Date.now()}.png`; 
-            link.href = alphaDataUrl; 
-            document.body.appendChild(link);
-            link.click(); 
-            document.body.removeChild(link); 
+            // 1. 서버로 보낼 정보 세팅
+            const payload = {
+                image: alphaDataUrl,
+                filename: `artwork_${Date.now()}.png`
+            };
 
-            alert("그림이 알파(투명) 배경으로 성공적으로 추출되었습니다!");
+            // 버튼 비활성화 (여러 번 누르는 것 방지)
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.style.pointerEvents = 'none';
+
+            // 2. Vercel 서버리스 함수 호출
+            fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(result => {
+                submitBtn.style.pointerEvents = 'auto';
+                if(result.success) {
+                    alert("서버에 성공적으로 저장되었습니다! 🎉");
+                    console.log("저장된 이미지 주소:", result.url);
+                } else {
+                    alert("저장 실패: " + result.error);
+                }
+            })
+            .catch(error => {
+                submitBtn.style.pointerEvents = 'auto';
+                console.error('Error:', error);
+                alert("서버 통신 중 오류가 발생했습니다.");
+            });
         });
     </script>
 </body>
